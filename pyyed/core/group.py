@@ -188,7 +188,7 @@ class Group:
         self.edges[edge.edge_id] = edge
         return edge
 
-    def convert(self):
+    def to_xml(self):
         node = ET.Element("node", id=self.node_id)
         node.set("yfiles.foldertype", "group")
         data = ET.SubElement(node, "data", key="data_node")
@@ -229,15 +229,15 @@ class Group:
             description_node.text = self.description
 
         for node_id in self.nodes:
-            n = self.nodes[node_id].convert()
+            n = self.nodes[node_id].to_xml()
             graph.append(n)
 
         for group_id in self.groups:
-            n = self.groups[group_id].convert()
+            n = self.groups[group_id].to_xml()
             graph.append(n)
 
         for edge_id in self.edges:
-            e = self.edges[edge_id].convert()
+            e = self.edges[edge_id].to_xml()
             graph.append(e)
 
         # Node Custom Properties

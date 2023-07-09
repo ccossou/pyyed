@@ -118,7 +118,7 @@ class Node:
         self.list_of_labels.append(NodeLabel(label_text, **kwargs))
         return self
 
-    def convert(self):
+    def to_xml(self):
 
         node = ET.Element("node", id=str(self.node_id))
         data = ET.SubElement(node, "data", key="data_node")

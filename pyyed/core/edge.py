@@ -72,7 +72,7 @@ class Edge:
         # Enable method chaining
         return self
 
-    def convert(self):
+    def to_xml(self):
         edge = ET.Element("edge", id=str(self.edge_id), source=str(self.node1), target=str(self.node2))
         data = ET.SubElement(edge, "data", key="data_edge")
         pl = ET.SubElement(data, "y:PolyLineEdge")

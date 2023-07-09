@@ -85,7 +85,7 @@ class Graph:
 
         # Definition: Custom Properties for Nodes and Edges
         for prop in self.custom_properties:
-            graphml.append(prop.convert())
+            graphml.append(prop.to_xml())
 
         edge_key = ET.SubElement(graphml, "key", id="data_edge")
         edge_key.set("for", "edge")
@@ -95,13 +95,13 @@ class Graph:
                               id=self.graph_id)
 
         for node in self.nodes.values():
-            graph.append(node.convert())
+            graph.append(node.to_xml())
 
         for node in self.groups.values():
-            graph.append(node.convert())
+            graph.append(node.to_xml())
 
         for edge in self.edges.values():
-            graph.append(edge.convert())
+            graph.append(edge.to_xml())
 
         self.graphml = graphml
 
