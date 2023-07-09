@@ -16,21 +16,21 @@ italy = g.add_group("Italy", description="Italy, country of south-central Europe
                     url="https://en.wikipedia.org/wiki/Italy")
 
 # Create Nodes
-italy.add_node("Turin", description="Turin is the capital city of Piedmont in northern Italy, known for its refined architecture and cuisine.",
+turin = italy.add_node("Turin", description="Turin is the capital city of Piedmont in northern Italy, known for its refined architecture and cuisine.",
                url="http://www.comune.torino.it")
-italy.add_node("Brescia", description="Brescia is a city in the northern Italian region of Lombardy.",
+brescia = italy.add_node("Brescia", description="Brescia is a city in the northern Italian region of Lombardy.",
                url="https://www.comune.brescia.it/Pagine/default.aspx")
-italy.add_node("Ivrea", description="Ivrea is a town and comune of the Metropolitan City of Turin in the Piedmont region of northwestern Italy.",
+ivrea = italy.add_node("Ivrea", description="Ivrea is a town and comune of the Metropolitan City of Turin in the Piedmont region of northwestern Italy.",
                url="https://www.comune.ivrea.to.it/")
-italy.add_node("Savona", description="Savona is a port city in Liguria, northwest Italy.",
+savona = italy.add_node("Savona", description="Savona is a port city in Liguria, northwest Italy.",
                url="https://www.comune.savona.it/it/")
 
 # Create Edges
-italy.add_edge_by_id("Turin", "Brescia", label='E64', arrowhead="none",
+italy.add_edge(turin, brescia, label='E64', arrowhead="none",
                      description="Length	246 km (153 mi)", url="https://en.wikipedia.org/wiki/European_route_E64")
-italy.add_edge_by_id("Turin", "Ivrea", label='E612', arrowhead="none",
+italy.add_edge(turin, ivrea, label='E612', arrowhead="none",
                      description="Length	54 km (34 mi)", url="https://en.wikipedia.org/wiki/European_route_E612")
-italy.add_edge_by_id("Turin", "Savona", label='E717', arrowhead="none",
+italy.add_edge(turin, savona, label='E717', arrowhead="none",
                      description="Length	141 km (88 mi)", url="https://en.wikipedia.org/wiki/European_route_E717")
 
 # Write Graph

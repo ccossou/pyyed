@@ -149,29 +149,29 @@ class Group:
         return node.parent is not None and (
                 node.parent is self or self.is_ancestor(node.parent))
 
-    def add_edge(self, node1_name, node2_name, **kwargs):
+    def add_edge_by_id(self, nodeid1, nodeid2, **kwargs):
         # pass node names, not actual node objects
 
-        node1 = self.parent_graph.existing_entities.get(node1_name) or \
-                self.add_node(node1_name)
+        node1 = self.parent_graph.existing_entities.get(nodeid1) or \
+                self.add_node(nodeid1)
 
-        node2 = self.parent_graph.existing_entities.get(node2_name) or \
-                self.add_node(node2_name)
+        node2 = self.parent_graph.existing_entities.get(nodeid2) or \
+                self.add_node(nodeid2)
 
         # http://graphml.graphdrawing.org/primer/graphml-primer.html#Nested
         # The edges between two nodes in a nested graph have to be declared in a graph,
         # which is an ancestor of both nodes in the hierarchy.
 
         if not (self.is_ancestor(node1) and self.is_ancestor(node2)):
-            raise RuntimeWarning("Group %s is not ancestor of both %s and %s" % (self.group_id, node1_name, node2_name))
+            raise RuntimeWarning("Group %s is not ancestor of both %s and %s" % (self.group_id, nodeid1, nodeid2))
 
         self.parent_graph.num_edges += 1
         kwargs['edge_id'] = str(self.parent_graph.num_edges)
-        edge = Edge(node1_name, node2_name, **kwargs)
+        edge = Edge(nodeid1, nodeid2, **kwargs)
         self.edges[edge.edge_id] = edge
         return edge
 
-    def add_edge_by_obj(self, node1, node2, **kwargs):
+    def add_edge(self, node1, node2, **kwargs):
         # pass node names, not actual node objects
 
         # http://graphml.graphdrawing.org/primer/graphml-primer.html#Nested
