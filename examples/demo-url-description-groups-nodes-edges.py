@@ -26,12 +26,12 @@ italy.add_node("Savona", description="Savona is a port city in Liguria, northwes
                url="https://www.comune.savona.it/it/")
 
 # Create Edges
-italy.add_edge("Turin", "Brescia", label='E64', arrowhead="none",
-               description="Length	246 km (153 mi)", url="https://en.wikipedia.org/wiki/European_route_E64")
-italy.add_edge("Turin", "Ivrea", label='E612', arrowhead="none",
-               description="Length	54 km (34 mi)", url="https://en.wikipedia.org/wiki/European_route_E612")
-italy.add_edge("Turin", "Savona", label='E717', arrowhead="none",
-               description="Length	141 km (88 mi)", url="https://en.wikipedia.org/wiki/European_route_E717")
+italy.add_edge_by_id("Turin", "Brescia", label='E64', arrowhead="none",
+                     description="Length	246 km (153 mi)", url="https://en.wikipedia.org/wiki/European_route_E64")
+italy.add_edge_by_id("Turin", "Ivrea", label='E612', arrowhead="none",
+                     description="Length	54 km (34 mi)", url="https://en.wikipedia.org/wiki/European_route_E612")
+italy.add_edge_by_id("Turin", "Savona", label='E717', arrowhead="none",
+                     description="Length	141 km (88 mi)", url="https://en.wikipedia.org/wiki/European_route_E717")
 
 # Write Graph
 g.write_graph('demo-url-description-groups-nodes-edges.graphml', pretty_print=True)

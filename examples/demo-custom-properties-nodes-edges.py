@@ -52,12 +52,12 @@ g.add_node('Gruyereville',
                               "Mayor": "Delage"})
 
 # Create Edges
-g.add_edge("Pasta City", "Wurst Stadt", label='N666', arrowhead="none",
-           custom_properties={"Year of build": "1974", "Distance": "356", "Toll Free": "false", "Availability": "85.7"})
-g.add_edge("Pasta City", "Gruyereville", label='E55', arrowhead="none",
-           custom_properties={"Year of build": "1986", "Distance": "1444", "Availability": "96.7"})
-g.add_edge("Gruyereville", "Wurst Stadt", label='E23', arrowhead="none",
-           custom_properties={"Year of build": "2011", "Distance": "740", "Toll Free": "false"})
+g.add_edge_by_id("Pasta City", "Wurst Stadt", label='N666', arrowhead="none",
+                 custom_properties={"Year of build": "1974", "Distance": "356", "Toll Free": "false", "Availability": "85.7"})
+g.add_edge_by_id("Pasta City", "Gruyereville", label='E55', arrowhead="none",
+                 custom_properties={"Year of build": "1986", "Distance": "1444", "Availability": "96.7"})
+g.add_edge_by_id("Gruyereville", "Wurst Stadt", label='E23', arrowhead="none",
+                 custom_properties={"Year of build": "2011", "Distance": "740", "Toll Free": "false"})
 
 # Write Graph
 g.write_graph('demo-custom-properties-nodes-edges.graphml', pretty_print=True)

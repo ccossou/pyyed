@@ -23,7 +23,7 @@ def test_node_properties_after_nodes_and_edges_added():
     node1 = g.add_node('foo',  shape="ellipse")
     node2  = g.add_node('foo2', shape="roundrectangle", font_style="bolditalic")
 
-    edge1 = g.add_edge('foo1', 'foo2')
+    edge1 = g.add_edge_by_id('foo1', 'foo2')
     node3 = g.add_node('abc', shape="triangle", font_style="bold")
 
     assert g.nodes["foo"].shape == "ellipse"
@@ -93,7 +93,7 @@ def test_numeric_node_ids():
     g = pyyed.Graph()
     g.add_node(1, label="Node1")
     g.add_node(2, label="Node2")
-    g.add_edge(1, 2)
+    g.add_edge_by_id(1, 2)
 
     assert g.nodes[1].list_of_labels[0]._text == "Node1"
     assert g.nodes[2].list_of_labels[0]._text == "Node2"
@@ -113,9 +113,9 @@ def test_multiple_edges():
     g.add_node('b', font_family="Zapfino").add_label("b2")
     g.add_node('c', font_family="Zapfino").add_label("c2")
 
-    g.add_edge('a', 'b')
-    g.add_edge('a', 'b')
-    g.add_edge('a', 'c')
+    g.add_edge_by_id('a', 'b')
+    g.add_edge_by_id('a', 'b')
+    g.add_edge_by_id('a', 'c')
 
     e1 = g.edges['1']
     e2 = g.edges['2']
@@ -160,7 +160,7 @@ def test_node_already_there_check():
         g.add_group('a')
 
     g = pyyed.Graph()
-    g.add_edge('a', 'b')
+    g.add_edge_by_id('a', 'b')
     with pytest.raises(RuntimeWarning):
         g.add_node('a')
     with pytest.raises(RuntimeWarning):
@@ -191,7 +191,7 @@ def test_node_already_there_check():
 
 def test_nested_graph_edges():
     g = pyyed.Graph()
-    g.add_edge('a', 'b')
+    g.add_edge_by_id('a', 'b')
     g1 = g.add_group('g1')
     g1n1 = g1.add_node('g1n1')
     g1n1 = g1.add_node('g1n2')
@@ -203,28 +203,28 @@ def test_nested_graph_edges():
     g3n2 = g3.add_node('g3n2')
 
     assert g.num_edges == 1
-    g1.add_edge('g1n1', 'g1n2')
+    g1.add_edge_by_id('g1n1', 'g1n2')
     assert g.num_edges == 2
-    g2.add_edge('g2n2', 'g2n2')  # No, that's not a typo
+    g2.add_edge_by_id('g2n2', 'g2n2')  # No, that's not a typo
     assert g.num_edges == 3
-    g3.add_edge('c', 'd')
-    g3.add_edge('c', 'd')
+    g3.add_edge_by_id('c', 'd')
+    g3.add_edge_by_id('c', 'd')
     assert g.num_edges == 5
 
-    g.add_edge('g2n1', 'g2n2')
-    g1.add_edge('g2n1', 'g2n2')
-    g2.add_edge('g2n1', 'g2n2')
+    g.add_edge_by_id('g2n1', 'g2n2')
+    g1.add_edge_by_id('g2n1', 'g2n2')
+    g2.add_edge_by_id('g2n1', 'g2n2')
     with pytest.raises(RuntimeWarning):
-        g3.add_edge('g2n1', 'g2n2')
+        g3.add_edge_by_id('g2n1', 'g2n2')
     assert g.num_edges == 8
 
     with pytest.raises(RuntimeWarning):
-        g2.add_edge('a', 'b')
+        g2.add_edge_by_id('a', 'b')
 
-    g.add_edge('g1n1', 'g2n2')
-    g1.add_edge('g1n1', 'g2n2')
+    g.add_edge_by_id('g1n1', 'g2n2')
+    g1.add_edge_by_id('g1n1', 'g2n2')
     with pytest.raises(RuntimeWarning):
-        g2.add_edge('g1n1', 'g2n2')
+        g2.add_edge_by_id('g1n1', 'g2n2')
     with pytest.raises(RuntimeWarning):
-        g3.add_edge('g1n1', 'g2n2')
+        g3.add_edge_by_id('g1n1', 'g2n2')
     assert g.num_edges == 10

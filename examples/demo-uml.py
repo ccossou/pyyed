@@ -13,8 +13,8 @@ g.add_node('ICar', shape_fill="#EEEEEE",
                 "methods": "getModel()\ngetManufacturer()\ngetPrice()\nsetPrice()"})
 
 g.add_node('Vehicle', shape_fill="#EEEEEE", node_type="UMLClassNode")
-g.add_edge('Car', 'Vehicle', arrowhead="white_delta")
-g.add_edge('Car', 'ICar', arrowhead="white_delta", line_type="dashed")
+g.add_edge_by_id('Car', 'Vehicle', arrowhead="white_delta")
+g.add_edge_by_id('Car', 'ICar', arrowhead="white_delta", line_type="dashed")
 
 
 g.add_node('This is a note', shape_fill="#EEEEEE", node_type="UMLNoteNode")

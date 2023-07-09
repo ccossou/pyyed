@@ -25,7 +25,7 @@ g.add_node('foo2', label="foo2", width="100", height="100").add_label(
     ).list_of_labels.pop(0)
 
 
-g.add_edge('foo', 'foo2', width="3.0", color="#0000FF").add_label(
+g.add_edge_by_id('foo', 'foo2', width="3.0", color="#0000FF").add_label(
     "Head", model_name = "two_pos", model_position="head", font_family="Courier New", font_style="bold",text_color= "#FF00FF", 
     background_color="#FFFFFF"
 ).add_label(
@@ -36,7 +36,7 @@ g.add_edge('foo', 'foo2', width="3.0", color="#0000FF").add_label(
     background_color="#FFFFFF"
 )
 
-g.add_edge('foo', 'foo2', width="3.0", color="#0000FF").add_label(
+g.add_edge_by_id('foo', 'foo2', width="3.0", color="#0000FF").add_label(
     "Head", model_name = "two_pos", model_position="head", font_family="Courier New", font_style="bold",text_color= "#FF00FF", 
     background_color="#FFFFFF"
 ).add_label(
