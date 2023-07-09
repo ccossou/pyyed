@@ -5,7 +5,7 @@ import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
 from . import constants
-from .node import Node
+from .. import node as nodes
 from .edge import Edge
 from .group import Group
 from .property import CustomPropertyDefinition
@@ -134,7 +134,13 @@ class Graph:
                 raise RuntimeWarning("Node %s already exists" % node_name)
             node_id = node_name
 
-        node = Node(node_name, node_id=node_id, **kwargs)
+        if "UML" in kwargs.keys():
+            NodeType = nodes.UmlNode
+        else:
+            NodeType = nodes.ShapeNode
+
+        node = NodeType(node_name, node_id=node_id, **kwargs)
+
         self.nodes[node_id] = node
         self.existing_entities[node_id] = node
         return node

@@ -11,16 +11,18 @@ LOG = logging.getLogger(__name__)
 class Node:
     custom_properties_defs = {}
 
+    node_type = None
+
     validShapes = ["rectangle", "rectangle3d", "roundrectangle", "diamond", "ellipse",
                    "fatarrow", "fatarrow2", "hexagon", "octagon", "parallelogram",
                    "parallelogram2", "star5", "star6", "star6", "star8", "trapezoid",
                    "trapezoid2", "triangle", "trapezoid2", "triangle"]
 
-    def __init__(self, node_name, label=None, label_alignment="center", shape="rectangle", font_family="Dialog",
+    def __init__(self, node_name, label=None, label_alignment="center", font_family="Dialog",
                  underlined_text="false", font_style="plain", font_size="12",
                  shape_fill="#FF0000", transparent="false", border_color="#000000",
                  border_type="line", border_width="1.0", height=False, width=False, x=False,
-                 y=False, node_type="ShapeNode", UML=False,
+                 y=False, UML=False,
                  custom_properties=None, description="", url="", node_id=None):
         """
 
@@ -66,14 +68,9 @@ class Node:
         else:
             self.node_id = node_name
 
-        self.node_type = node_type
         self.UML = UML
 
         self.parent = None
-
-        # node shape
-        utils.check_value("shape", shape, Node.validShapes)
-        self.shape = shape
 
         # shape fill
         self.shape_fill = shape_fill
@@ -114,57 +111,46 @@ class Node:
             else:
                 setattr(self, name, definition.default_value)
 
+        # Future storage for xml object nodes
+        self._ET_node = None
+        self._ET_data = None
+        self._ET_shape = None
+
     def add_label(self, label_text, **kwargs):
         self.list_of_labels.append(NodeLabel(label_text, **kwargs))
         return self
 
     def to_xml(self):
 
-        node = ET.Element("node", id=str(self.node_id))
-        data = ET.SubElement(node, "data", key="data_node")
-        shape = ET.SubElement(data, "y:" + self.node_type)
+        self._ET_node = ET.Element("node", id=str(self.node_id))
+        self._ET_data = ET.SubElement(self._ET_node, "data", key="data_node")
+        self._ET_shape = ET.SubElement(self._ET_data, "y:" + self.node_type)
 
         if self.geom:
-            ET.SubElement(shape, "y:Geometry", **self.geom)
+            ET.SubElement(self._ET_shape, "y:Geometry", **self.geom)
         # <y:Geometry height="30.0" width="30.0" x="475.0" y="727.0"/>
 
-        ET.SubElement(shape, "y:Fill", color=self.shape_fill,
+        ET.SubElement(self._ET_shape, "y:Fill", color=self.shape_fill,
                       transparent=self.transparent)
 
-        ET.SubElement(shape, "y:BorderStyle", color=self.border_color, type=self.border_type,
+        ET.SubElement(self._ET_shape, "y:BorderStyle", color=self.border_color, type=self.border_type,
                       width=self.border_width)
 
         for label in self.list_of_labels:
-            label.addSubElement(shape)
-
-        ET.SubElement(shape, "y:Shape", type=self.shape)
-
-        if self.UML:
-            UML = ET.SubElement(shape, "y:UML", use3DEffect="false")
-
-            attributes = ET.SubElement(UML, "y:AttributeLabel", type=self.shape)
-            attributes.text = self.UML["attributes"]
-
-            methods = ET.SubElement(UML, "y:MethodLabel", type=self.shape)
-            methods.text = self.UML["methods"]
-
-            stereotype = self.UML["stereotype"] if "stereotype" in self.UML else ""
-            UML.set("stereotype", stereotype)
+            label.addSubElement(self._ET_shape)
 
         if self.url:
-            url_node = ET.SubElement(node, "data", key="url_node")
+            url_node = ET.SubElement(self._ET_node, "data", key="url_node")
             url_node.text = self.url
 
         if self.description:
-            description_node = ET.SubElement(node, "data", key="description_node")
+            description_node = ET.SubElement(self._ET_node, "data", key="description_node")
             description_node.text = self.description
 
         # Node Custom Properties
         for name, definition in Node.custom_properties_defs.items():
-            node_custom_prop = ET.SubElement(node, "data", key=definition.id)
+            node_custom_prop = ET.SubElement(self._ET_node, "data", key=definition.id)
             node_custom_prop.text = getattr(self, name)
-
-        return node
 
     @classmethod
     def set_custom_properties_defs(cls, custom_property):
