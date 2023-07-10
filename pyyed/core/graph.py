@@ -8,7 +8,6 @@ from . import constants
 from .. import node as nodes
 from .edge import Edge
 from .group import Group
-from .property import CustomPropertyDefinition
 
 LOG = logging.getLogger(__name__)
 
@@ -36,8 +35,6 @@ class Graph:
         self.existing_entities = {self.graph_id: self}
 
         self.groups = {}
-
-        self.custom_properties = []
 
         self.graphml = ""
 
@@ -82,10 +79,6 @@ class Graph:
         node_key.set("for", "edge")
         node_key.set("attr.name", "description")
         node_key.set("attr.type", "string")
-
-        # Definition: Custom Properties for Nodes and Edges
-        for prop in self.custom_properties:
-            graphml.append(prop.to_xml())
 
         edge_key = ET.SubElement(graphml, "key", id="data_edge")
         edge_key.set("for", "edge")
@@ -134,12 +127,7 @@ class Graph:
                 raise RuntimeWarning("Node %s already exists" % node_name)
             node_id = node_name
 
-        if "UML" in kwargs.keys():
-            NodeType = nodes.UmlNode
-        else:
-            NodeType = nodes.ShapeNode
-
-        node = NodeType(node_name, node_id=node_id, **kwargs)
+        node = nodes.make_node(node_name, node_id=node_id, **kwargs)
 
         self.nodes[node_id] = node
         self.existing_entities[node_id] = node
@@ -179,20 +167,6 @@ class Graph:
         self.groups[node_id] = group
         self.existing_entities[node_id] = group
         return group
-
-    def define_custom_property(self, scope, name, property_type, default_value):
-        if scope not in constants.custom_property_scopes:
-            raise RuntimeWarning("Scope %s not recognised" % scope)
-        if property_type not in constants.custom_property_types:
-            raise RuntimeWarning("Property Type %s not recognised" % property_type)
-        if type(default_value) != str:
-            raise RuntimeWarning("default_value %s needs to be a string" % default_value)
-        custom_property = CustomPropertyDefinition(scope, name, property_type, default_value)
-        self.custom_properties.append(custom_property)
-        if scope == "node":
-            Node.set_custom_properties_defs(custom_property)
-        elif scope == "edge":
-            Edge.set_custom_properties_defs(custom_property)
 
     def _next_unique_identifier(self):
         """

@@ -9,13 +9,11 @@ LOG = logging.getLogger(__name__)
 
 
 class Edge:
-    custom_properties_defs = {}
-
     def __init__(self, node1, node2, label=None, arrowhead="standard", arrowfoot="none",
                  color="#000000", line_type="line", width="1.0", edge_id="",
                  label_background_color="", label_border_color="",
                  source_label=None, target_label=None,
-                 custom_properties=None, description="", url=""):
+                 description="", url=""):
         self.node1 = node1
         self.node2 = node2
 
@@ -53,19 +51,6 @@ class Edge:
         self.description = description
         self.url = url
 
-        # Handle Edge Custom Properties
-        for name, definition in Edge.custom_properties_defs.items():
-            if custom_properties:
-                for k, v in custom_properties.items():
-                    if k not in Edge.custom_properties_defs:
-                        raise RuntimeWarning("key %s not recognised" % k)
-                    if name == k:
-                        setattr(self, name, custom_properties[k])
-                        break
-                else:
-                    setattr(self, name, definition.default_value)
-            else:
-                setattr(self, name, definition.default_value)
 
     def add_label(self, label_text, **kwargs):
         self.list_of_labels.append(EdgeLabel(label_text, **kwargs))
@@ -92,14 +77,4 @@ class Edge:
             description_edge = ET.SubElement(edge, "data", key="description_edge")
             description_edge.text = self.description
 
-        # Edge Custom Properties
-        for name, definition in Edge.custom_properties_defs.items():
-            edge_custom_prop = ET.SubElement(edge, "data", key=definition.id)
-            edge_custom_prop.text = getattr(self, name)
-
         return edge
-
-    @classmethod
-    def set_custom_properties_defs(cls, custom_property):
-        cls.custom_properties_defs[custom_property.name] = custom_property
-

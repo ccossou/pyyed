@@ -9,8 +9,11 @@ g.add_node('foo2', shape="roundrectangle", font_style="bolditalic",
 g.add_edge_by_id('foo1', 'foo2')
 g.add_node('abc', font_size="72", height="100")
 
-g.add_node('bar', label="Multi\nline\ntext")
-g.add_node('foobar', label="""Multi
+b = g.add_node('bar')
+b.add_label("Multi\nline\ntext")
+
+f = g.add_node('foobar')
+f.add_label("""Multi
 Line
 Text!""")
 

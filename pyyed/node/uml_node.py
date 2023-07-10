@@ -1,24 +1,22 @@
 import logging
 import xml.etree.ElementTree as ET
 
-from . import constants
-from .label import NodeLabel
-from . import utils
-from ..core import Node
+from ..core.label import NodeLabel
+from ..core.node import Node
 
 LOG = logging.getLogger(__name__)
 
 
-class UmlNode:
+class UmlNode(Node):
     node_type = "UMLClassNode"
 
-    def __init__(self, UML, **kwargs):
+    def __init__(self, node_name, UML, **kwargs):
         """
 
         :param node_name:
         :param UML:
         """
-        super().__init__(self, **kwargs)
+        super().__init__(node_name, **kwargs)
         self.UML = UML
 
 

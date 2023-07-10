@@ -2,7 +2,7 @@ import logging
 import xml.etree.ElementTree as ET
 
 from . import constants
-from .node import Node
+from .. import node as nodes
 from .edge import Edge
 from . import utils
 
@@ -19,7 +19,7 @@ class Group:
                  closed="false", font_family="Dialog", underlined_text="false",
                  font_style="plain", font_size="12", fill="#FFCC00", transparent="false",
                  border_color="#000000", border_type="line", border_width="1.0", height=False,
-                 width=False, x=False, y=False, custom_properties=None, description="", url="", node_id=None):
+                 width=False, x=False, y=False, description="", url="", node_id=None):
         """
 
         :param group_id:
@@ -41,7 +41,6 @@ class Group:
         :param width:
         :param x:
         :param y:
-        :param custom_properties:
         :param description:
         :param url:
         :param node_id: If set, will allow a different name than the node_name (to allow duplicates)
@@ -103,20 +102,6 @@ class Group:
         self.description = description
         self.url = url
 
-        # Handle Node Custom Properties
-        for name, definition in Node.custom_properties_defs.items():
-            if custom_properties:
-                for k, v in custom_properties.items():
-                    if k not in Node.custom_properties_defs:
-                        raise RuntimeWarning("key %s not recognised" % k)
-                    if name == k:
-                        setattr(self, name, custom_properties[k])
-                        break
-                else:
-                    setattr(self, name, definition.default_value)
-            else:
-                setattr(self, name, definition.default_value)
-
     def add_node(self, node_name, **kwargs):
         if self.parent_graph.duplicates:
             node_id = self.parent_graph._next_unique_identifier()
@@ -125,7 +110,7 @@ class Group:
                 raise RuntimeWarning("Node %s already exists" % node_name)
             node_id = node_name
 
-        node = Node(node_name, node_id=node_id, **kwargs)
+        node = nodes.make_node(node_name, node_id=node_id, **kwargs)
         node.parent = self
         self.nodes[node_id] = node
         self.parent_graph.existing_entities[node_id] = node
@@ -239,11 +224,6 @@ class Group:
         for edge_id in self.edges:
             e = self.edges[edge_id].to_xml()
             graph.append(e)
-
-        # Node Custom Properties
-        for name, definition in Node.custom_properties_defs.items():
-            node_custom_prop = ET.SubElement(node, "data", key=definition.id)
-            node_custom_prop.text = getattr(self, name)
 
         return node
         # ProxyAutoBoundsNode crap just draws bar at top of group

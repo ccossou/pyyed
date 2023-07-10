@@ -9,8 +9,6 @@ LOG = logging.getLogger(__name__)
 
 
 class Node:
-    custom_properties_defs = {}
-
     node_type = None
 
     validShapes = ["rectangle", "rectangle3d", "roundrectangle", "diamond", "ellipse",
@@ -18,16 +16,15 @@ class Node:
                    "parallelogram2", "star5", "star6", "star6", "star8", "trapezoid",
                    "trapezoid2", "triangle", "trapezoid2", "triangle"]
 
-    def __init__(self, node_name, label=None, label_alignment="center", font_family="Dialog",
+    def __init__(self, node_name, label_alignment="center", font_family="Dialog",
                  underlined_text="false", font_style="plain", font_size="12",
                  shape_fill="#FF0000", transparent="false", border_color="#000000",
                  border_type="line", border_width="1.0", height=False, width=False, x=False,
-                 y=False, UML=False,
-                 custom_properties=None, description="", url="", node_id=None):
+                 y=False,
+                 description="", url="", node_id=None):
         """
 
         :param node_name:
-        :param label:
         :param label_alignment:
         :param shape:
         :param font_family:
@@ -45,21 +42,16 @@ class Node:
         :param y:
         :param node_type:
         :param UML:
-        :param custom_properties:
         :param description:
         :param url:
         :param node_id: If set, will allow a different name than the node_name (to allow duplicates)
         """
 
         self.list_of_labels = []  # initialize list of labels
-        if label:
-            self.add_label(label, alignment=label_alignment,
-                           font_family=font_family, underlined_text=underlined_text,
-                           font_style=font_style, font_size=font_size)
-        else:
-            self.add_label(node_name, alignment=label_alignment,
-                           font_family=font_family, underlined_text=underlined_text,
-                           font_style=font_style, font_size=font_size)
+
+        self.add_label(node_name, alignment=label_alignment,
+                       font_family=font_family, underlined_text=underlined_text,
+                       font_style=font_style, font_size=font_size)
 
         self.node_name = node_name
 
@@ -67,8 +59,6 @@ class Node:
             self.node_id = node_id
         else:
             self.node_id = node_name
-
-        self.UML = UML
 
         self.parent = None
 
@@ -96,20 +86,6 @@ class Node:
 
         self.description = description
         self.url = url
-
-        # Handle Node Custom Properties
-        for name, definition in Node.custom_properties_defs.items():
-            if custom_properties:
-                for k, v in custom_properties.items():
-                    if k not in Node.custom_properties_defs:
-                        raise RuntimeWarning("key %s not recognised" % k)
-                    if name == k:
-                        setattr(self, name, custom_properties[k])
-                        break
-                else:
-                    setattr(self, name, definition.default_value)
-            else:
-                setattr(self, name, definition.default_value)
 
         # Future storage for xml object nodes
         self._ET_node = None
@@ -146,13 +122,3 @@ class Node:
         if self.description:
             description_node = ET.SubElement(self._ET_node, "data", key="description_node")
             description_node.text = self.description
-
-        # Node Custom Properties
-        for name, definition in Node.custom_properties_defs.items():
-            node_custom_prop = ET.SubElement(self._ET_node, "data", key=definition.id)
-            node_custom_prop.text = getattr(self, name)
-
-    @classmethod
-    def set_custom_properties_defs(cls, custom_property):
-        cls.custom_properties_defs[custom_property.name] = custom_property
-

@@ -1,10 +1,9 @@
 import logging
 import xml.etree.ElementTree as ET
 
-from . import constants
-from .label import NodeLabel
-from . import utils
-from ..core import Node
+from ..core.label import NodeLabel
+from ..core import utils
+from ..core.node import Node
 
 LOG = logging.getLogger(__name__)
 
@@ -19,7 +18,7 @@ class ShapeNode(Node):
                    "parallelogram2", "star5", "star6", "star6", "star8", "trapezoid",
                    "trapezoid2", "triangle", "trapezoid2", "triangle"]
 
-    def __init__(self, shape="rectangle", **kwargs):
+    def __init__(self, node_name, shape="rectangle", **kwargs):
         """
 
         :param node_name:
@@ -46,7 +45,7 @@ class ShapeNode(Node):
         :param url:
         :param node_id: If set, will allow a different name than the node_name (to allow duplicates)
         """
-        super().__init__(self, **kwargs)
+        super().__init__(node_name, **kwargs)
 
         # node shape
         utils.check_value("shape", shape, Node.validShapes)
@@ -60,7 +59,7 @@ class ShapeNode(Node):
         # Generic Node conversion
         Node.to_xml(self)
 
-        ET.SubElement(self.ET_shape, "y:Shape", type=self.shape)
+        ET.SubElement(self._ET_shape, "y:Shape", type=self.shape)
 
         return self._ET_node
 
