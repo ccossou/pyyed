@@ -119,18 +119,10 @@ class Graph:
             return ET.tostring(self.graphml, encoding='UTF-8').decode()
 
     def add_node(self, node_name, **kwargs):
+        node = nodes.make_node(node_name, **kwargs)
 
-        if self.duplicates:
-            node_id = self._next_unique_identifier()
-        else:
-            if node_name in self.existing_entities:
-                raise RuntimeWarning("Node %s already exists" % node_name)
-            node_id = node_name
-
-        node = nodes.make_node(node_name, node_id=node_id, **kwargs)
-
-        self.nodes[node_id] = node
-        self.existing_entities[node_id] = node
+        self.nodes[node.id] = node
+        self.existing_entities[node.id] = node
         return node
 
     def add_edge_by_id(self, nodeid1, nodeid2, **kwargs):
@@ -142,7 +134,7 @@ class Graph:
         self.num_edges += 1
         kwargs['edge_id'] = str(self.num_edges)
         edge = Edge(nodeid1, nodeid2, **kwargs)
-        self.edges[edge.edge_id] = edge
+        self.edges[edge.id] = edge
         return edge
 
     def add_edge(self, node1, node2, **kwargs):
@@ -151,28 +143,12 @@ class Graph:
 
         self.num_edges += 1
         kwargs['edge_id'] = str(self.num_edges)
-        edge = Edge(node1.node_id, node2.node_id, **kwargs)
-        self.edges[edge.edge_id] = edge
+        edge = Edge(node1.id, node2.id, **kwargs)
+        self.edges[edge.id] = edge
         return edge
 
     def add_group(self, group_id, **kwargs):
-        if self.duplicates:
-            node_id = self._next_unique_identifier()
-        else:
-            if group_id in self.existing_entities:
-                raise RuntimeWarning("Node %s already exists" % group_id)
-            node_id = group_id
-
-        group = Group(group_id, self, node_id=node_id, **kwargs)
-        self.groups[node_id] = group
-        self.existing_entities[node_id] = group
+        group = Group(group_id, self, **kwargs)
+        self.groups[group.id] = group
+        self.existing_entities[group.id] = group
         return group
-
-    def _next_unique_identifier(self):
-        """
-        Increment internal counter, then return next identifier not yet used.
-        """
-        self.num_nodes += 1
-        node_id = str(self.num_nodes)
-
-        return node_id

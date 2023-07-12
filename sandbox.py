@@ -25,14 +25,16 @@ print(g.get_graph())
 print("\n\n\n")
 
 g = pyyed.Graph()
-g.add_node('foo', font_family="Zapfino")
+n1 = g.add_node('foo', font_family="Zapfino")
 
-gg = g.add_group("MY_Group", shape="diamond")
-gg.add_node('foo2', shape="roundrectangle", font_style="bolditalic",
+grp1 = g.add_group("MY_Group", shape="diamond")
+n2 = grp1.add_node('foo2', shape="roundrectangle", font_style="bolditalic",
             underlined_text="true")
-gg.add_node('abc', font_size="72", height="100")
+n3 = grp1.add_node('abc', font_size="72", height="100")
 
-g.add_edge_by_id('foo2', 'abc')
-g.add_edge_by_id('foo', 'MY_Group')
+g.add_edge(n2, n3)
+g.add_edge(n1, grp1)
+
+g.write_graph("test.graphml")
 
 print(g.get_graph())

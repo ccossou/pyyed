@@ -3,17 +3,19 @@ import xml.etree.ElementTree as ET
 
 from . import constants
 from .label import EdgeLabel
+from .item import XmlItem
 from . import utils
 
 LOG = logging.getLogger(__name__)
 
 
-class Edge:
+class Edge(XmlItem):
     def __init__(self, node1, node2, label=None, arrowhead="standard", arrowfoot="none",
                  color="#000000", line_type="line", width="1.0", edge_id="",
                  label_background_color="", label_border_color="",
                  source_label=None, target_label=None,
                  description="", url=""):
+        super().__init__()
         self.node1 = node1
         self.node2 = node2
 

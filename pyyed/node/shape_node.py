@@ -18,34 +18,13 @@ class ShapeNode(Node):
                    "parallelogram2", "star5", "star6", "star6", "star8", "trapezoid",
                    "trapezoid2", "triangle", "trapezoid2", "triangle"]
 
-    def __init__(self, node_name, shape="rectangle", **kwargs):
+    def __init__(self, node_name, shape="rectangle", **style_params):
         """
 
         :param node_name:
-        :param label:
-        :param label_alignment:
-        :param shape:
-        :param font_family:
-        :param underlined_text:
-        :param font_style:
-        :param font_size:
-        :param shape_fill:
-        :param transparent:
-        :param border_color:
-        :param border_type:
-        :param border_width:
-        :param height:
-        :param width:
-        :param x:
-        :param y:
-        :param node_type:
-        :param UML:
-        :param custom_properties:
-        :param description:
-        :param url:
-        :param node_id: If set, will allow a different name than the node_name (to allow duplicates)
+        :param dict style_params: common parameters passed to Node.
         """
-        super().__init__(node_name, **kwargs)
+        super().__init__(node_name, **style_params)
 
         # node shape
         utils.check_value("shape", shape, Node.validShapes)

@@ -10,13 +10,14 @@ LOG = logging.getLogger(__name__)
 class UmlNode(Node):
     node_type = "UMLClassNode"
 
-    def __init__(self, node_name, UML, **kwargs):
+    def __init__(self, node_name, UML, **style_params):
         """
 
         :param node_name:
         :param UML:
+        :param dict style_params: common parameters passed to Node.
         """
-        super().__init__(node_name, **kwargs)
+        super().__init__(node_name, **style_params)
         self.UML = UML
 
 

@@ -3,12 +3,13 @@ import xml.etree.ElementTree as ET
 
 from . import constants
 from .label import NodeLabel
+from .item import XmlItem
 from . import utils
 
 LOG = logging.getLogger(__name__)
 
 
-class Node:
+class Node(XmlItem):
     node_type = None
 
     validShapes = ["rectangle", "rectangle3d", "roundrectangle", "diamond", "ellipse",
@@ -21,7 +22,7 @@ class Node:
                  shape_fill="#FF0000", transparent="false", border_color="#000000",
                  border_type="line", border_width="1.0", height=False, width=False, x=False,
                  y=False,
-                 description="", url="", node_id=None):
+                 description="", url=""):
         """
 
         :param node_name:
@@ -46,6 +47,7 @@ class Node:
         :param url:
         :param node_id: If set, will allow a different name than the node_name (to allow duplicates)
         """
+        super().__init__()
 
         self.list_of_labels = []  # initialize list of labels
 
@@ -54,11 +56,6 @@ class Node:
                        font_style=font_style, font_size=font_size)
 
         self.node_name = node_name
-
-        if node_id is not None:
-            self.node_id = node_id
-        else:
-            self.node_id = node_name
 
         self.parent = None
 
@@ -98,7 +95,7 @@ class Node:
 
     def to_xml(self):
 
-        self._ET_node = ET.Element("node", id=str(self.node_id))
+        self._ET_node = ET.Element("node", id=str(self.id))
         self._ET_data = ET.SubElement(self._ET_node, "data", key="data_node")
         self._ET_shape = ET.SubElement(self._ET_data, "y:" + self.node_type)
 

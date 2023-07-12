@@ -5,11 +5,12 @@ from . import constants
 from .. import node as nodes
 from .edge import Edge
 from . import utils
+from .item import XmlItem
 
 LOG = logging.getLogger(__name__)
 
 
-class Group:
+class Group(XmlItem):
     validShapes = ["rectangle", "rectangle3d", "roundrectangle", "diamond", "ellipse",
                    "fatarrow", "fatarrow2", "hexagon", "octagon", "parallelogram",
                    "parallelogram2", "star5", "star6", "star6", "star8", "trapezoid",
@@ -19,7 +20,7 @@ class Group:
                  closed="false", font_family="Dialog", underlined_text="false",
                  font_style="plain", font_size="12", fill="#FFCC00", transparent="false",
                  border_color="#000000", border_type="line", border_width="1.0", height=False,
-                 width=False, x=False, y=False, description="", url="", node_id=None):
+                 width=False, x=False, y=False, description="", url=""):
         """
 
         :param group_id:
@@ -45,17 +46,14 @@ class Group:
         :param url:
         :param node_id: If set, will allow a different name than the node_name (to allow duplicates)
         """
+        super().__init__()
+
         self.label = label
         if label is None:
             self.label = group_id
 
         self.parent = None
         self.group_id = group_id
-
-        if node_id is not None:
-            self.node_id = node_id
-        else:
-            self.node_id = group_id
 
         self.nodes = {}
         self.groups = {}
@@ -103,17 +101,10 @@ class Group:
         self.url = url
 
     def add_node(self, node_name, **kwargs):
-        if self.parent_graph.duplicates:
-            node_id = self.parent_graph._next_unique_identifier()
-        else:
-            if node_name in self.parent_graph.existing_entities:
-                raise RuntimeWarning("Node %s already exists" % node_name)
-            node_id = node_name
-
-        node = nodes.make_node(node_name, node_id=node_id, **kwargs)
+        node = nodes.make_node(node_name, **kwargs)
         node.parent = self
-        self.nodes[node_id] = node
-        self.parent_graph.existing_entities[node_id] = node
+        self.nodes[node.id] = node
+        self.parent_graph.existing_entities[node.id] = node
         return node
 
     def add_group(self, group_id, **kwargs):
@@ -124,10 +115,10 @@ class Group:
                 raise RuntimeWarning("Node %s already exists" % group_id)
             node_id = group_id
 
-        group = Group(group_id, self.parent_graph, node_id=node_id, allow_duplicates=self.duplicates, **kwargs)
+        group = Group(group_id, self.parent_graph, **kwargs)
         group.parent = self
-        self.groups[node_id] = group
-        self.parent_graph.existing_entities[node_id] = group
+        self.groups[group.id] = group
+        self.parent_graph.existing_entities[group.id] = group
         return group
 
     def is_ancestor(self, node):
@@ -153,7 +144,7 @@ class Group:
         self.parent_graph.num_edges += 1
         kwargs['edge_id'] = str(self.parent_graph.num_edges)
         edge = Edge(nodeid1, nodeid2, **kwargs)
-        self.edges[edge.edge_id] = edge
+        self.edges[edge.id] = edge
         return edge
 
     def add_edge(self, node1, node2, **kwargs):
@@ -169,12 +160,12 @@ class Group:
 
         self.parent_graph.num_edges += 1
         kwargs['edge_id'] = str(self.parent_graph.num_edges)
-        edge = Edge(node1.node_id, node2.node_id, **kwargs)
-        self.edges[edge.edge_id] = edge
+        edge = Edge(node1.id, node2.id, **kwargs)
+        self.edges[edge.id] = edge
         return edge
 
     def to_xml(self):
-        node = ET.Element("node", id=self.node_id)
+        node = ET.Element("node", id=self.id)
         node.set("yfiles.foldertype", "group")
         data = ET.SubElement(node, "data", key="data_node")
 
