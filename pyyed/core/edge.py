@@ -11,7 +11,7 @@ LOG = logging.getLogger(__name__)
 
 class Edge(XmlItem):
     def __init__(self, node1, node2, label=None, arrowhead="standard", arrowfoot="none",
-                 color="#000000", line_type="line", width="1.0", edge_id="",
+                 color="#000000", line_type="line", width="1.0",
                  label_background_color="", label_border_color="",
                  source_label=None, target_label=None,
                  description="", url=""):
@@ -23,10 +23,6 @@ class Edge(XmlItem):
 
         if label:
             self.add_label(label, border_color=label_border_color, background_color=label_background_color)
-
-        if not edge_id:
-            edge_id = "%s_%s" % (node1, node2)
-        self.edge_id = str(edge_id)
 
         if source_label is not None:
             self.add_label(source_label, model_name="six_pos", model_position="shead",
@@ -60,7 +56,7 @@ class Edge(XmlItem):
         return self
 
     def to_xml(self):
-        edge = ET.Element("edge", id=str(self.edge_id), source=str(self.node1), target=str(self.node2))
+        edge = ET.Element("edge", id=str(self.id), source=str(self.node1.id), target=str(self.node2.id))
         data = ET.SubElement(edge, "data", key="data_edge")
         pl = ET.SubElement(data, "y:PolyLineEdge")
 

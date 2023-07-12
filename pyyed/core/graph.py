@@ -13,7 +13,7 @@ LOG = logging.getLogger(__name__)
 
 
 class Graph:
-    def __init__(self, directed="directed", graph_id="G", allow_duplicates=True):
+    def __init__(self, directed="directed", graph_id="G"):
         """
 
         :param directed:
@@ -24,17 +24,12 @@ class Graph:
 
         self.nodes = {}
         self.edges = {}
-        self.num_edges = 0
-        self.duplicates = allow_duplicates
-
-        # Only used if duplicates = True
-        self.num_nodes = 0
+        self.groups = {}
 
         self.directed = directed
         self.graph_id = graph_id
         self.existing_entities = {self.graph_id: self}
 
-        self.groups = {}
 
         self.graphml = ""
 
@@ -90,25 +85,21 @@ class Graph:
         for node in self.nodes.values():
             graph.append(node.to_xml())
 
-        for node in self.groups.values():
-            graph.append(node.to_xml())
+        for grp in self.groups.values():
+            graph.append(grp.to_xml())
 
         for edge in self.edges.values():
             graph.append(edge.to_xml())
 
         self.graphml = graphml
 
-    def write_graph(self, filename, pretty_print=False):
+    def write_graph(self, filename):
         self.construct_graphml()
 
-        if pretty_print:
-            raw_str = ET.tostring(self.graphml)
-            pretty_str = minidom.parseString(raw_str).toprettyxml()
-            with open(filename, 'w') as f:
-                f.write(pretty_str)
-        else:
-            tree = ET.ElementTree(self.graphml)
-            tree.write(filename)
+        raw_str = ET.tostring(self.graphml)
+        pretty_str = minidom.parseString(raw_str).toprettyxml()
+        with open(filename, 'w') as f:
+            f.write(pretty_str)
 
     def get_graph(self):
         self.construct_graphml()
@@ -125,30 +116,16 @@ class Graph:
         self.existing_entities[node.id] = node
         return node
 
-    def add_edge_by_id(self, nodeid1, nodeid2, **kwargs):
-        # pass node names, not actual node objects
-
-        self.existing_entities.get(nodeid1)
-        self.existing_entities.get(nodeid2)
-
-        self.num_edges += 1
-        kwargs['edge_id'] = str(self.num_edges)
-        edge = Edge(nodeid1, nodeid2, **kwargs)
-        self.edges[edge.id] = edge
-        return edge
 
     def add_edge(self, node1, node2, **kwargs):
-        # pass node names, not actual node objects
+        # pass node objects
 
-
-        self.num_edges += 1
-        kwargs['edge_id'] = str(self.num_edges)
-        edge = Edge(node1.id, node2.id, **kwargs)
+        edge = Edge(node1, node2, **kwargs)
         self.edges[edge.id] = edge
         return edge
 
-    def add_group(self, group_id, **kwargs):
-        group = Group(group_id, self, **kwargs)
+    def add_group(self, name, **kwargs):
+        group = Group(name, self, **kwargs)
         self.groups[group.id] = group
         self.existing_entities[group.id] = group
         return group

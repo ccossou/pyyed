@@ -16,14 +16,14 @@ class Group(XmlItem):
                    "parallelogram2", "star5", "star6", "star6", "star8", "trapezoid",
                    "trapezoid2", "triangle", "trapezoid2", "triangle"]
 
-    def __init__(self, group_id, parent_graph, label=None, label_alignment="center", shape="rectangle",
+    def __init__(self, name, parent_graph, label=None, label_alignment="center", shape="rectangle",
                  closed="false", font_family="Dialog", underlined_text="false",
                  font_style="plain", font_size="12", fill="#FFCC00", transparent="false",
                  border_color="#000000", border_type="line", border_width="1.0", height=False,
                  width=False, x=False, y=False, description="", url=""):
         """
 
-        :param group_id:
+        :param name:
         :param parent_graph:
         :param label:
         :param label_alignment:
@@ -44,16 +44,15 @@ class Group(XmlItem):
         :param y:
         :param description:
         :param url:
-        :param node_id: If set, will allow a different name than the node_name (to allow duplicates)
         """
         super().__init__()
 
         self.label = label
         if label is None:
-            self.label = group_id
+            self.label = name
 
         self.parent = None
-        self.group_id = group_id
+        self.name = name
 
         self.nodes = {}
         self.groups = {}
@@ -107,15 +106,8 @@ class Group(XmlItem):
         self.parent_graph.existing_entities[node.id] = node
         return node
 
-    def add_group(self, group_id, **kwargs):
-        if self.parent_graph.duplicates:
-            node_id = self.parent_graph._next_unique_identifier()
-        else:
-            if group_id in self.parent_graph.existing_entities:
-                raise RuntimeWarning("Node %s already exists" % group_id)
-            node_id = group_id
-
-        group = Group(group_id, self.parent_graph, **kwargs)
+    def add_group(self, name, **kwargs):
+        group = Group(name, self.parent_graph, **kwargs)
         group.parent = self
         self.groups[group.id] = group
         self.parent_graph.existing_entities[group.id] = group
@@ -125,49 +117,26 @@ class Group(XmlItem):
         return node.parent is not None and (
                 node.parent is self or self.is_ancestor(node.parent))
 
-    def add_edge_by_id(self, nodeid1, nodeid2, **kwargs):
-        # pass node names, not actual node objects
-
-        node1 = self.parent_graph.existing_entities.get(nodeid1) or \
-                self.add_node(nodeid1)
-
-        node2 = self.parent_graph.existing_entities.get(nodeid2) or \
-                self.add_node(nodeid2)
-
-        # http://graphml.graphdrawing.org/primer/graphml-primer.html#Nested
-        # The edges between two nodes in a nested graph have to be declared in a graph,
-        # which is an ancestor of both nodes in the hierarchy.
-
-        if not (self.is_ancestor(node1) and self.is_ancestor(node2)):
-            raise RuntimeWarning("Group %s is not ancestor of both %s and %s" % (self.group_id, nodeid1, nodeid2))
-
-        self.parent_graph.num_edges += 1
-        kwargs['edge_id'] = str(self.parent_graph.num_edges)
-        edge = Edge(nodeid1, nodeid2, **kwargs)
-        self.edges[edge.id] = edge
-        return edge
 
     def add_edge(self, node1, node2, **kwargs):
-        # pass node names, not actual node objects
+        # pass node objects
 
         # http://graphml.graphdrawing.org/primer/graphml-primer.html#Nested
         # The edges between two nodes in a nested graph have to be declared in a graph,
         # which is an ancestor of both nodes in the hierarchy.
 
         if not (self.is_ancestor(node1) and self.is_ancestor(node2)):
-            raise RuntimeWarning("Group %s is not ancestor of both %s and %s" % (self.group_id, node1.node_name,
+            raise RuntimeWarning("Group %s is not ancestor of both %s and %s" % (self.name, node1.node_name,
                                                                                  node2.node_name))
 
-        self.parent_graph.num_edges += 1
-        kwargs['edge_id'] = str(self.parent_graph.num_edges)
-        edge = Edge(node1.id, node2.id, **kwargs)
+        edge = Edge(node1, node2, **kwargs)
         self.edges[edge.id] = edge
         return edge
 
     def to_xml(self):
-        node = ET.Element("node", id=self.id)
-        node.set("yfiles.foldertype", "group")
-        data = ET.SubElement(node, "data", key="data_node")
+        xml_node = ET.Element("node", id=self.id)
+        xml_node.set("yfiles.foldertype", "group")
+        data = ET.SubElement(xml_node, "data", key="data_node")
 
         # node for group
         pabn = ET.SubElement(data, "y:ProxyAutoBoundsNode")
@@ -194,28 +163,23 @@ class Group(XmlItem):
 
         ET.SubElement(group_node, "y:State", closed=self.closed)
 
-        graph = ET.SubElement(node, "graph", edgedefault="directed", id=self.group_id)
+        graph = ET.SubElement(xml_node, "graph", edgedefault="directed", id=self.name)
 
         if self.url:
-            url_node = ET.SubElement(node, "data", key="url_node")
+            url_node = ET.SubElement(xml_node, "data", key="url_node")
             url_node.text = self.url
 
         if self.description:
-            description_node = ET.SubElement(node, "data", key="description_node")
+            description_node = ET.SubElement(xml_node, "data", key="description_node")
             description_node.text = self.description
 
-        for node_id in self.nodes:
-            n = self.nodes[node_id].to_xml()
-            graph.append(n)
+        for node in self.nodes.values():
+            graph.append(node.to_xml())
 
-        for group_id in self.groups:
-            n = self.groups[group_id].to_xml()
-            graph.append(n)
+        for grp in self.groups.values():
+            graph.append(grp.to_xml())
 
-        for edge_id in self.edges:
-            e = self.edges[edge_id].to_xml()
-            graph.append(e)
+        for edge in self.edges.values():
+            graph.append(edge.to_xml())
 
-        return node
-        # ProxyAutoBoundsNode crap just draws bar at top of group
-
+        return xml_node

@@ -55,7 +55,7 @@ class Node(XmlItem):
                        font_family=font_family, underlined_text=underlined_text,
                        font_style=font_style, font_size=font_size)
 
-        self.node_name = node_name
+        self.name = node_name
 
         self.parent = None
 
@@ -94,7 +94,9 @@ class Node(XmlItem):
         return self
 
     def to_xml(self):
-
+        """
+        Init in the parent class all XML items that are common to all child classes
+        """
         self._ET_node = ET.Element("node", id=str(self.id))
         self._ET_data = ET.SubElement(self._ET_node, "data", key="data_node")
         self._ET_shape = ET.SubElement(self._ET_data, "y:" + self.node_type)
