@@ -98,13 +98,14 @@ class Group(XmlItem):
 
     def add_node(self, NodeClass, node_name, **kwargs):
         node = NodeClass(node_name, parent=self, **kwargs)
+
         self.nodes[node.id] = node
         self.parent_graph.existing_entities[node.id] = node
         return node
 
     def add_group(self, name, **kwargs):
-        group = Group(name, self, **kwargs)
-        group.parent = self
+        group = Group(name, parent=self, **kwargs)
+
         self.groups[group.id] = group
         self.parent_graph.existing_entities[group.id] = group
         return group
@@ -125,7 +126,7 @@ class Group(XmlItem):
             raise RuntimeWarning("Group %s is not ancestor of both %s and %s" % (self.name, node1.node_name,
                                                                                  node2.node_name))
 
-        edge = Edge(node1, node2, **kwargs)
+        edge = Edge(node1, node2, parent=self, **kwargs)
         self.edges[edge.id] = edge
         return edge
 
