@@ -30,7 +30,7 @@ class Edge(XmlItem):
                            border_color=label_border_color, background_color=label_background_color)
 
         if target_label is not None:
-            self.add_label(source_label, model_name="six_pos", model_position="shead",
+            self.add_label(source_label, model_name="six_pos", model_position="thead",
                            preferred_placement="source_on_edge",
                            border_color=label_border_color, background_color=label_background_color)
 
