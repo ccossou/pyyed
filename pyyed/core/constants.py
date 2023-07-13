@@ -1,4 +1,3 @@
-# Shared parameters
 line_types = ["line", "dashed", "dotted", "dashed_dotted"]
 arrow_types = ["none", "standard", "white_delta", "diamond", "white_diamond", "short",
                "plain", "concave", "convex", "circle", "transparent_circle", "dash",

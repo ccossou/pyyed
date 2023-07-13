@@ -1,5 +1,4 @@
 import logging
-import sys
 
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
@@ -16,8 +15,6 @@ class Graph:
 
         :param directed:
         :param graph_id:
-        :param allow_duplicates: True by default to keep compatibility with past behavior. If True, text in node
-        will be different than label to ensure we can add multiple nodes with the same name.
         """
 
         self.nodes = {}

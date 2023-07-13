@@ -47,4 +47,3 @@ class UmlNode(Node):
     @classmethod
     def set_custom_properties_defs(cls, custom_property):
         cls.custom_properties_defs[custom_property.name] = custom_property
-

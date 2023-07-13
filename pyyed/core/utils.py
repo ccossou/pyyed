@@ -1,7 +1,5 @@
 import logging
 
-from . import constants
-
 LOG = logging.getLogger(__name__)
 
 def check_value(parameter_name, value, validValues = None):

@@ -1,5 +1,5 @@
 import logging
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta
 
 LOG = logging.getLogger(__name__)
 
