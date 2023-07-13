@@ -10,11 +10,14 @@ class XmlItem:
     identifier = None
     _class_counter = 0
 
-    def __init__(self):
+    def __init__(self, parent):
         self.__class__._class_counter += 1
         self.counter = self.__class__._class_counter
 
         self.__class__.identifier = self.__class__.__name__
+
+        self.parent = parent
+        self.parent_graph = parent.parent_graph
 
     @property
     def id(self):

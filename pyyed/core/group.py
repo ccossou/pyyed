@@ -16,7 +16,7 @@ class Group(XmlItem):
                    "parallelogram2", "star5", "star6", "star6", "star8", "trapezoid",
                    "trapezoid2", "triangle", "trapezoid2", "triangle"]
 
-    def __init__(self, name, parent_graph, label=None, label_alignment="center", shape="rectangle",
+    def __init__(self, name, parent, label=None, label_alignment="center", shape="rectangle",
                  closed="false", font_family="Dialog", underlined_text="false",
                  font_style="plain", font_size="12", fill="#FFCC00", transparent="false",
                  border_color="#000000", border_type="line", border_width="1.0", height=False,
@@ -47,16 +47,17 @@ class Group(XmlItem):
         """
         super().__init__()
 
+        self.name = name
+
         self.label = label
         if label is None:
             self.label = name
 
-        self.parent = None
-        self.name = name
+        self.parent = parent
+        self.parent_graph = parent.parent_graph
 
         self.nodes = {}
         self.groups = {}
-        self.parent_graph = parent_graph
         self.edges = {}
         self.num_edges = 0
 
@@ -107,7 +108,7 @@ class Group(XmlItem):
         return node
 
     def add_group(self, name, **kwargs):
-        group = Group(name, self.parent_graph, **kwargs)
+        group = Group(name, self, **kwargs)
         group.parent = self
         self.groups[group.id] = group
         self.parent_graph.existing_entities[group.id] = group

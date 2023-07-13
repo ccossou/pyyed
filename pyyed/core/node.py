@@ -22,7 +22,7 @@ class Node(XmlItem):
                  shape_fill="#FF0000", transparent="false", border_color="#000000",
                  border_type="line", border_width="1.0", height=False, width=False, x=False,
                  y=False,
-                 description="", url=""):
+                 description="", url="", **kwargs):
         """
 
         :param node_name:
@@ -47,7 +47,7 @@ class Node(XmlItem):
         :param url:
         :param node_id: If set, will allow a different name than the node_name (to allow duplicates)
         """
-        super().__init__()
+        super().__init__(**kwargs)
 
         self.list_of_labels = []  # initialize list of labels
 
@@ -56,8 +56,6 @@ class Node(XmlItem):
                        font_style=font_style, font_size=font_size)
 
         self.name = node_name
-
-        self.parent = None
 
         # shape fill
         self.shape_fill = shape_fill
