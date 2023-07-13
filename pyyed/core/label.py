@@ -15,7 +15,6 @@ class Label:
                  font_family="Dialog",
                  font_size="12",
                  font_style="plain",
-                 horizontalTextPosition="center",
                  underlined_text = "false",
                  text_color="#000000",
                  icon_text_gap="4",
@@ -78,16 +77,8 @@ class NodeLabel(Label):
 
     graphML_tagName = "y:NodeLabel"
 
-    def __init__(self, text, alignment="center", font_family="Dialog", font_size="12", font_style="plain",
-                 height="18.1328125",
-                 horizontalTextPosition="center", underlined_text="false", icon_text_gap="4",
-                 text_color="#000000", horizontal_text_position="center", vertical_text_position="center",
-                 visible="true",
-                 has_background_color="false", width="55.708984375", model_name="internal",
-                 border_color=None, background_color=None, model_position="c"):
-        super().__init__(text, height, width, alignment, font_family, font_size, font_style, horizontalTextPosition,
-                         underlined_text, text_color, icon_text_gap, horizontal_text_position, vertical_text_position,
-                         visible, border_color, background_color, has_background_color)
+    def __init__(self, text, model_name="internal", model_position="c", **kwargs):
+        super().__init__(text, **kwargs)
 
         self.updateParam("modelName", model_name, NodeLabel.validModelParams.keys())
         self.updateParam("modelPosition", model_position, NodeLabel.validModelParams[model_name])
@@ -105,17 +96,8 @@ class EdgeLabel(Label):
 
     graphML_tagName = "y:EdgeLabel"
 
-    def __init__(self, text, alignment="center", font_family="Dialog", font_size="12", font_style="plain",
-                 height="18.1328125",
-                 horizontalTextPosition="center", underlined_text="false", icon_text_gap="4",
-                 text_color="#000000", horizontal_text_position="center", vertical_text_position="center",
-                 visible="true",
-                 has_background_color="false", width="55.708984375", model_name="centered", model_position="center",
-                 border_color=None, background_color=None,
-                 preferred_placement=None):
-        super().__init__(text, height, width, alignment, font_family, font_size, font_style, horizontalTextPosition,
-                         underlined_text, text_color, icon_text_gap, horizontal_text_position, vertical_text_position,
-                         visible, border_color, background_color, has_background_color)
+    def __init__(self, text, model_name="centered", model_position="center", preferred_placement=None, **kwargs):
+        super().__init__(text, **kwargs)
 
         self.updateParam("modelName", model_name, EdgeLabel.validModelParams.keys())
         self.updateParam("modelPosition", model_position, EdgeLabel.validModelParams[model_name])
