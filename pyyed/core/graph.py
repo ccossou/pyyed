@@ -30,6 +30,7 @@ class Graph:
 
         # a graph object is its own graph reference.
         self.parent_graph = self
+        self.parent = None
 
         self.graphml = None
 
@@ -103,11 +104,8 @@ class Graph:
 
     def get_graph(self):
         self.construct_graphml()
-        # Py2/3 sigh.
-        if sys.version_info.major < 3:
-            return ET.tostring(self.graphml, encoding='UTF-8')
-        else:
-            return ET.tostring(self.graphml, encoding='UTF-8').decode()
+
+        return ET.tostring(self.graphml, encoding='UTF-8').decode()
 
     def add_node(self, NodeClass, node_name, **kwargs):
         node = NodeClass(node_name, parent=self, **kwargs)
@@ -115,7 +113,6 @@ class Graph:
         self.nodes[node.id] = node
         self.existing_entities[node.id] = node
         return node
-
 
     def add_edge(self, node1, node2, **kwargs):
         # pass node objects

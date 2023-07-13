@@ -1,8 +1,9 @@
 import logging
+from abc import ABCMeta, abstractmethod
 
 LOG = logging.getLogger(__name__)
 
-class XmlItem:
+class XmlItem(metaclass=ABCMeta):
     """
     Generic class to whom all graph object derive (node, group and edges)
     """

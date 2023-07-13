@@ -5,7 +5,7 @@ from . import constants
 from .edge import Edge
 from .label import NodeLabel
 from . import utils
-from .item import XmlItem
+from .xml_item import XmlItem
 
 LOG = logging.getLogger(__name__)
 
@@ -117,8 +117,8 @@ class Group(XmlItem):
         # which is an ancestor of both nodes in the hierarchy.
 
         if not (self.is_ancestor(node1) and self.is_ancestor(node2)):
-            raise RuntimeWarning("Group %s is not ancestor of both %s and %s" % (self.name, node1.node_name,
-                                                                                 node2.node_name))
+            raise RuntimeWarning("Group %s is not ancestor of both %s and %s" % (self.name, node1.name,
+                                                                                 node2.name))
 
         edge = Edge(node1, node2, parent=self, **kwargs)
         self.edges[edge.id] = edge

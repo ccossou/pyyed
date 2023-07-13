@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET
 
 from . import constants
 from .label import EdgeLabel
-from .item import XmlItem
+from .xml_item import XmlItem
 from . import utils
 
 LOG = logging.getLogger(__name__)

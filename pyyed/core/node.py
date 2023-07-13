@@ -1,15 +1,16 @@
 import logging
 import xml.etree.ElementTree as ET
+from abc import ABCMeta, abstractmethod
 
 from . import constants
 from .label import NodeLabel
-from .item import XmlItem
+from .xml_item import XmlItem
 from . import utils
 
 LOG = logging.getLogger(__name__)
 
 
-class Node(XmlItem):
+class Node(XmlItem, metaclass=ABCMeta):
     node_type = None
 
     validShapes = ["rectangle", "rectangle3d", "roundrectangle", "diamond", "ellipse",
@@ -87,10 +88,12 @@ class Node(XmlItem):
         self._ET_data = None
         self._ET_shape = None
 
+    @abstractmethod
     def add_label(self, label_text, **kwargs):
         self.list_of_labels.append(NodeLabel(label_text, **kwargs))
         return self
 
+    @abstractmethod
     def to_xml(self):
         """
         Init in the parent class all XML items that are common to all child classes
