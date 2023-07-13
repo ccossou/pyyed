@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 
 from . import constants
 from .edge import Edge
+from .label import NodeLabel
 from . import utils
 from .item import XmlItem
 
@@ -15,16 +16,14 @@ class Group(XmlItem):
                    "parallelogram2", "star5", "star6", "star6", "star8", "trapezoid",
                    "trapezoid2", "triangle", "trapezoid2", "triangle"]
 
-    def __init__(self, name, label=None, label_alignment="center", shape="rectangle",
+    def __init__(self, name, label_alignment="center", shape="rectangle",
                  closed="false", font_family="Dialog", underlined_text="false",
-                 font_style="plain", font_size="12", fill="#ffffff", transparent="false",
+                 font_style="plain", font_size="12", fill="#caecff80", label_background="#99ccff", transparent="false",
                  border_color="#000000", border_type="line", border_width="1.0", height=False,
                  width=False, x=False, y=False, description="", url="", **kwargs):
         """
 
         :param name:
-        :param parent_graph:
-        :param label:
         :param label_alignment:
         :param shape:
         :param closed:
@@ -33,6 +32,7 @@ class Group(XmlItem):
         :param font_style:
         :param font_size:
         :param fill:
+        :param label_background:
         :param transparent:
         :param border_color:
         :param border_type:
@@ -43,14 +43,11 @@ class Group(XmlItem):
         :param y:
         :param description:
         :param url:
+        :param kwargs:
         """
         super().__init__(**kwargs)
 
         self.name = name
-
-        self.label = label
-        if label is None:
-            self.label = name
 
         self.nodes = {}
         self.groups = {}
@@ -60,22 +57,21 @@ class Group(XmlItem):
         # node shape
         utils.check_value("shape", shape, Group.validShapes)
         self.shape = shape
-
+        self.fill = fill
+        self.transparent = transparent
         self.closed = closed
 
         # label formatting options
-        self.font_family = font_family
-        self.underlined_text = underlined_text
-
         utils.check_value("font_style", font_style, constants.font_styles)
-        self.font_style = font_style
-        self.font_size = font_size
-
         utils.check_value("label_alignment", label_alignment, constants.horizontal_alignments)
-        self.label_alignment = label_alignment
 
-        self.fill = fill
-        self.transparent = transparent
+        self.label_style = dict(model_name="internal", model_position="t", font_family=font_family, font_size=font_size,
+                                underlined_text=underlined_text, font_style=font_style,
+                                background_color=label_background, alignment=label_alignment,
+                                autoSizePolicy="node_width")
+
+        self.list_of_labels = []
+        self.list_of_labels.append(NodeLabel(name, **self.label_style))
 
         self.geom = {}
         if height:
@@ -114,7 +110,6 @@ class Group(XmlItem):
         return node.parent is not None and (
                 node.parent is self or self.is_ancestor(node.parent))
 
-
     def add_edge(self, node1, node2, **kwargs):
         # pass node objects
 
@@ -148,13 +143,8 @@ class Group(XmlItem):
         ET.SubElement(group_node, "y:BorderStyle", color=self.border_color,
                       type=self.border_type, width=self.border_width)
 
-        label = ET.SubElement(group_node, "y:NodeLabel", modelName="internal",
-                              modelPosition="t",
-                              fontFamily=self.font_family, fontSize=self.font_size,
-                              underlinedText=self.underlined_text,
-                              fontStyle=self.font_style,
-                              alignment=self.label_alignment)
-        label.text = self.label
+        for label in self.list_of_labels:
+            label.addSubElement(group_node)
 
         ET.SubElement(group_node, "y:Shape", type=self.shape)
 

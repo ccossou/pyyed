@@ -10,7 +10,7 @@ LOG = logging.getLogger(__name__)
 class Label:
     graphML_tagName = None
 
-    def __init__(self, text, height="18.1328125", width= None,
+    def __init__(self, text, height="18.1328125", width=None,
                  alignment="center",
                  font_family="Dialog",
                  font_size="12",
@@ -21,9 +21,8 @@ class Label:
                  horizontal_text_position="center",
                  vertical_text_position="center",
                  visible="true",
-                 border_color = None,
-                 background_color = None,
-                 has_background_color="false"):
+                 border_color=None,
+                 background_color=None):
 
         # make class abstract
         if type(self) is Label:
@@ -44,9 +43,11 @@ class Label:
         self.updateParam("fontSize", font_size)
         self.updateParam("textColor", text_color)
         self.updateParam("visible", visible.lower(), ["true", "false"])
-        self.updateParam("underlinedText" ,underlined_text.lower(), ["true", "false"])
-        if background_color:
+        self.updateParam("underlinedText", underlined_text.lower(), ["true", "false"])
+        if background_color is not None:
             has_background_color = "true"
+        else:
+            has_background_color = "false"
         self.updateParam("hasBackgroundColor", has_background_color.lower(), ["true", "false"])
         self.updateParam("width", width)
         self.updateParam("height", height)
@@ -72,16 +73,20 @@ class NodeLabel(Label):
         "corners": ["nw", "ne", "sw", "se"],
         "sandwich": ["n", "s"],
         "sides": ["n", "e", "s", "w"],
-        "eight_pos": ["n", "e", "s", "w", "nw", "ne", "sw", "se"]
+        "eight_pos": ["n", "e", "s", "w", "nw", "ne", "sw", "se"],
+        "free": ["anywhere"],
     }
+
+    autoSizePolicy_values = ["node_width", "node_size", "node_height", "content"]
 
     graphML_tagName = "y:NodeLabel"
 
-    def __init__(self, text, model_name="internal", model_position="c", **kwargs):
+    def __init__(self, text, model_name="internal", model_position="c", autoSizePolicy="content", **kwargs):
         super().__init__(text, **kwargs)
 
-        self.updateParam("modelName", model_name, NodeLabel.validModelParams.keys())
-        self.updateParam("modelPosition", model_position, NodeLabel.validModelParams[model_name])
+        self.updateParam("modelName", model_name, self.__class__.validModelParams.keys())
+        self.updateParam("modelPosition", model_position, self.__class__.validModelParams[model_name])
+        self.updateParam("autoSizePolicy", autoSizePolicy, self.__class__.autoSizePolicy_values)
 
 
 class EdgeLabel(Label):
@@ -91,7 +96,8 @@ class EdgeLabel(Label):
         "six_pos": ["shead", "thead", "head", "stail", "ttail", "tail"],
         "three_center": ["center", "scentr", "tcentr"],
         "center_slider": None,
-        "side_slider": None
+        "side_slider": None,
+        "free": ["anywhere"],
     }
 
     graphML_tagName = "y:EdgeLabel"
@@ -99,6 +105,6 @@ class EdgeLabel(Label):
     def __init__(self, text, model_name="centered", model_position="center", preferred_placement=None, **kwargs):
         super().__init__(text, **kwargs)
 
-        self.updateParam("modelName", model_name, EdgeLabel.validModelParams.keys())
-        self.updateParam("modelPosition", model_position, EdgeLabel.validModelParams[model_name])
+        self.updateParam("modelName", model_name, self.__class__.validModelParams.keys())
+        self.updateParam("modelPosition", model_position, self.__class__.validModelParams[model_name])
         self.updateParam("preferredPlacement", preferred_placement)
