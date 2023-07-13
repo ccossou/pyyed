@@ -2,7 +2,6 @@ import logging
 import xml.etree.ElementTree as ET
 
 from . import constants
-from .. import node as nodes
 from .edge import Edge
 from . import utils
 from .item import XmlItem
@@ -16,11 +15,11 @@ class Group(XmlItem):
                    "parallelogram2", "star5", "star6", "star6", "star8", "trapezoid",
                    "trapezoid2", "triangle", "trapezoid2", "triangle"]
 
-    def __init__(self, name, parent, label=None, label_alignment="center", shape="rectangle",
+    def __init__(self, name, label=None, label_alignment="center", shape="rectangle",
                  closed="false", font_family="Dialog", underlined_text="false",
                  font_style="plain", font_size="12", fill="#FFCC00", transparent="false",
                  border_color="#000000", border_type="line", border_width="1.0", height=False,
-                 width=False, x=False, y=False, description="", url=""):
+                 width=False, x=False, y=False, description="", url="", **kwargs):
         """
 
         :param name:
@@ -45,16 +44,13 @@ class Group(XmlItem):
         :param description:
         :param url:
         """
-        super().__init__()
+        super().__init__(**kwargs)
 
         self.name = name
 
         self.label = label
         if label is None:
             self.label = name
-
-        self.parent = parent
-        self.parent_graph = parent.parent_graph
 
         self.nodes = {}
         self.groups = {}
@@ -100,9 +96,8 @@ class Group(XmlItem):
         self.description = description
         self.url = url
 
-    def add_node(self, node_name, **kwargs):
-        node = nodes.make_node(node_name, **kwargs)
-        node.parent = self
+    def add_node(self, NodeClass, node_name, **kwargs):
+        node = NodeClass(node_name, parent=self, **kwargs)
         self.nodes[node.id] = node
         self.parent_graph.existing_entities[node.id] = node
         return node

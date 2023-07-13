@@ -14,8 +14,8 @@ class Edge(XmlItem):
                  color="#000000", line_type="line", width="1.0",
                  label_background_color="", label_border_color="",
                  source_label=None, target_label=None,
-                 description="", url=""):
-        super().__init__()
+                 description="", url="", **kwargs):
+        super().__init__(**kwargs)
         self.node1 = node1
         self.node2 = node2
 

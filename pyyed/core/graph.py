@@ -4,8 +4,6 @@ import sys
 import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
-from . import constants
-from .. import node as nodes
 from .edge import Edge
 from .group import Group
 
@@ -30,8 +28,10 @@ class Graph:
         self.graph_id = graph_id
         self.existing_entities = {self.graph_id: self}
 
+        # a graph object is its own graph reference.
+        self.parent_graph = self
 
-        self.graphml = ""
+        self.graphml = None
 
     def construct_graphml(self):
         # xml = ET.Element("?xml", version="1.0", encoding="UTF-8", standalone="no")
@@ -109,8 +109,8 @@ class Graph:
         else:
             return ET.tostring(self.graphml, encoding='UTF-8').decode()
 
-    def add_node(self, node_name, **kwargs):
-        node = nodes.make_node(node_name, **kwargs)
+    def add_node(self, NodeClass, node_name, **kwargs):
+        node = NodeClass(node_name, parent=self, **kwargs)
 
         self.nodes[node.id] = node
         self.existing_entities[node.id] = node
@@ -120,12 +120,12 @@ class Graph:
     def add_edge(self, node1, node2, **kwargs):
         # pass node objects
 
-        edge = Edge(node1, node2, **kwargs)
+        edge = Edge(node1, node2, parent=self, **kwargs)
         self.edges[edge.id] = edge
         return edge
 
     def add_group(self, name, **kwargs):
-        group = Group(name, self, **kwargs)
+        group = Group(name, parent=self, **kwargs)
         self.groups[group.id] = group
         self.existing_entities[group.id] = group
         return group
