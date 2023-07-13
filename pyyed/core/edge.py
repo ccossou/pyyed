@@ -12,7 +12,7 @@ LOG = logging.getLogger(__name__)
 class Edge(XmlItem):
     def __init__(self, node1, node2, label=None, arrowhead="standard", arrowfoot="none",
                  color="#000000", line_type="line", width="1.0",
-                 label_background_color="", label_border_color="",
+                 label_background_color=None, label_border_color="",
                  source_label=None, target_label=None,
                  description="", url="", **kwargs):
         super().__init__(**kwargs)

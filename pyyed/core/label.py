@@ -46,13 +46,13 @@ class Label:
         self.updateParam("underlinedText", underlined_text.lower(), ["true", "false"])
         if background_color is not None:
             has_background_color = "true"
+            self.updateParam("backgroundColor", background_color)
         else:
             has_background_color = "false"
         self.updateParam("hasBackgroundColor", has_background_color.lower(), ["true", "false"])
         self.updateParam("width", width)
         self.updateParam("height", height)
         self.updateParam("borderColor", border_color)
-        self.updateParam("backgroundColor", background_color)
 
     def updateParam(self, parameter_name, value, validValues=None):
         if value is None:

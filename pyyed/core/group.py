@@ -52,7 +52,6 @@ class Group(XmlItem):
         self.nodes = {}
         self.groups = {}
         self.edges = {}
-        self.num_edges = 0
 
         # node shape
         utils.check_value("shape", shape, Group.validShapes)
