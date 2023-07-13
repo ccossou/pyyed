@@ -19,7 +19,7 @@ class Node(XmlItem):
 
     def __init__(self, node_name, label_alignment="center", font_family="Dialog",
                  underlined_text="false", font_style="plain", font_size="12",
-                 shape_fill="#FF0000", transparent="false", border_color="#000000",
+                 shape_fill="#ffffff", transparent="false", border_color="#000000",
                  border_type="line", border_width="1.0", height=False, width=False, x=False,
                  y=False,
                  description="", url="", **kwargs):
