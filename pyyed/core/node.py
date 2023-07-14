@@ -18,22 +18,23 @@ class Node(XmlItem, metaclass=ABCMeta):
                    "parallelogram2", "star5", "star6", "star6", "star8", "trapezoid",
                    "trapezoid2", "triangle", "trapezoid2", "triangle"]
 
-    def __init__(self, node_name, label_alignment="center", font_family="Dialog",
+    def __init__(self, node_name, title_alignment="center", font_family="Dialog",
                  underlined_text="false", font_style="plain", font_size="12",
-                 shape_fill="#ffffff", transparent="false", border_color="#000000",
+                 background="#ffffff", transparent="false", border_color="#000000",
+                 background_color=None,
                  border_type="line", border_width="1.0", height=False, width=False, x=False,
                  y=False,
                  description="", url="", **kwargs):
         """
 
         :param node_name:
-        :param label_alignment:
+        :param title_alignment:
         :param shape:
         :param font_family:
         :param underlined_text:
         :param font_style:
         :param font_size:
-        :param shape_fill:
+        :param background:
         :param transparent:
         :param border_color:
         :param border_type:
@@ -52,14 +53,16 @@ class Node(XmlItem, metaclass=ABCMeta):
 
         self.list_of_labels = []  # initialize list of labels
 
-        self.add_label(node_name, alignment=label_alignment,
-                       font_family=font_family, underlined_text=underlined_text,
-                       font_style=font_style, font_size=font_size)
+        self.label_style = dict(alignment=title_alignment, background_color=background_color,
+                                font_family=font_family, underlined_text=underlined_text,
+                                font_style=font_style, font_size=font_size)
+
+        self.add_label(node_name, **self.label_style)
 
         self.name = node_name
 
         # shape fill
-        self.shape_fill = shape_fill
+        self.background = background
         self.transparent = transparent
 
         # border options
@@ -106,7 +109,7 @@ class Node(XmlItem, metaclass=ABCMeta):
             ET.SubElement(self._ET_shape, "y:Geometry", **self.geom)
         # <y:Geometry height="30.0" width="30.0" x="475.0" y="727.0"/>
 
-        ET.SubElement(self._ET_shape, "y:Fill", color=self.shape_fill,
+        ET.SubElement(self._ET_shape, "y:Fill", color=self.background,
                       transparent=self.transparent)
 
         ET.SubElement(self._ET_shape, "y:BorderStyle", color=self.border_color, type=self.border_type,

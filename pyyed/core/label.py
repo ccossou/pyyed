@@ -15,14 +15,14 @@ class Label:
                  font_family="Dialog",
                  font_size="12",
                  font_style="plain",
-                 underlined_text = "false",
+                 underlined_text="false",
                  text_color="#000000",
                  icon_text_gap="4",
                  horizontal_text_position="center",
                  vertical_text_position="center",
                  visible="true",
                  border_color=None,
-                 background_color=None):
+                 background_color=None, **kwargs):
 
         # make class abstract
         if type(self) is Label:
@@ -44,15 +44,14 @@ class Label:
         self.updateParam("textColor", text_color)
         self.updateParam("visible", visible.lower(), ["true", "false"])
         self.updateParam("underlinedText", underlined_text.lower(), ["true", "false"])
-        if background_color is not None:
-            has_background_color = "true"
-            self.updateParam("backgroundColor", background_color)
-        else:
-            has_background_color = "false"
-        self.updateParam("hasBackgroundColor", has_background_color.lower(), ["true", "false"])
         self.updateParam("width", width)
         self.updateParam("height", height)
         self.updateParam("borderColor", border_color)
+        # This parameter will be ignored if hasBackgroundColor is 'false' (see addSubElement)
+        self.updateParam("backgroundColor", background_color)
+
+        for key, value in kwargs.items():
+            self.updateParam(key, value)
 
     def updateParam(self, parameter_name, value, validValues=None):
         if value is None:
@@ -63,8 +62,17 @@ class Label:
         return True
 
     def addSubElement(self, shape):
+
+        # set parameter just before making the xml node, to make sure the value is accurate
+        if "backgroundColor" in self._params and self._params["backgroundColor"] is not None:
+            has_background_color = "true"
+        else:
+            has_background_color = "false"
+        self.updateParam("hasBackgroundColor", has_background_color.lower(), ["true", "false"])
+
         label = ET.SubElement(shape, self.graphML_tagName, **self._params)
         label.text = self._text
+        return label
 
 
 class NodeLabel(Label):
@@ -75,6 +83,7 @@ class NodeLabel(Label):
         "sides": ["n", "e", "s", "w"],
         "eight_pos": ["n", "e", "s", "w", "nw", "ne", "sw", "se"],
         "free": ["anywhere"],
+        "custom": [None],
     }
 
     autoSizePolicy_values = ["node_width", "node_size", "node_height", "content"]
@@ -108,3 +117,26 @@ class EdgeLabel(Label):
         self.updateParam("modelName", model_name, self.__class__.validModelParams.keys())
         self.updateParam("modelPosition", model_position, self.__class__.validModelParams[model_name])
         self.updateParam("preferredPlacement", preferred_placement)
+
+
+class GenericLabel(Label):
+    validModelParams = {
+        "internal": ["t", "b", "c", "l", "r", "tl", "tr", "bl", "br"],
+        "corners": ["nw", "ne", "sw", "se"],
+        "sandwich": ["n", "s"],
+        "sides": ["n", "e", "s", "w"],
+        "eight_pos": ["n", "e", "s", "w", "nw", "ne", "sw", "se"],
+        "free": ["anywhere"],
+        "custom": [None],
+    }
+
+    autoSizePolicy_values = ["node_width", "node_size", "node_height", "content"]
+
+    graphML_tagName = "y:NodeLabel"
+
+    def __init__(self, text, model_name="custom", model_position=None, autoSizePolicy="content", **kwargs):
+        super().__init__(text, **kwargs)
+
+        self.updateParam("modelName", model_name, self.__class__.validModelParams.keys())
+        self.updateParam("modelPosition", model_position, self.__class__.validModelParams[model_name])
+        self.updateParam("autoSizePolicy", autoSizePolicy, self.__class__.autoSizePolicy_values)

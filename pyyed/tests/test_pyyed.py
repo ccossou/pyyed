@@ -8,13 +8,13 @@ import pytest
 def test_graph_added_node_has_default_fill():
     g = pyyed.Graph()
     node = g.add_node(pn.ShapeNode, 'N1')
-    assert "#ffffff" == g.nodes[node.id].shape_fill
+    assert "#ffffff" == g.nodes[node.id].background
 
 
 def test_graph_added_node_keeps_custom_fill():
     g = pyyed.Graph()
-    node = g.add_node(pn.ShapeNode, 'N1', shape_fill="#99CC00")
-    assert "#99CC00" == g.nodes[node.id].shape_fill
+    node = g.add_node(pn.ShapeNode, 'N1', background="#99CC00")
+    assert "#99CC00" == g.nodes[node.id].background
 
 
 def test_node_properties_after_nodes_and_edges_added():
