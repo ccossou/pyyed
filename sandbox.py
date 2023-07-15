@@ -13,7 +13,15 @@ g = pyyed.Graph()
 #
 # f = g.add_node(pyyed.ShapeNode, 'foobar')
 
-l = g.add_node(pyyed.GenericNode, "Entity", description="line1\nline2\nline3")
+# l = g.add_node(pyyed.GenericNode, "Entity", description="line1\nline2\nline3")
+
+table = [
+    ("Rows", "Name", "Unit"),
+    ("Row 0", "toto", "str"),
+    ("Row 1", 123, "int"),
+]
+
+t = g.add_node(pyyed.TableNode, "Entity", table=table)
 
 #
 # e2 = g.add_edge(n2, n3, label="EDGE!", width="3.0", color="#0000FF",

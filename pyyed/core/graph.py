@@ -1,7 +1,6 @@
 import logging
 
 import xml.etree.ElementTree as ET
-from xml.dom import minidom
 
 from .edge import Edge
 from .group import Group
@@ -94,10 +93,8 @@ class Graph:
     def write_graph(self, filename):
         self.construct_graphml()
 
-        raw_str = ET.tostring(self.graphml)
-        pretty_str = minidom.parseString(raw_str).toprettyxml()
-        with open(filename, 'w') as f:
-            f.write(pretty_str)
+        tree = ET.ElementTree(self.graphml)
+        tree.write(filename)
 
     def get_graph(self):
         self.construct_graphml()
