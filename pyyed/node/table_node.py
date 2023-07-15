@@ -38,10 +38,12 @@ class TableNode(GenericNode):
 
     def make_html_table(self, table):
         html_txt = "<html>"
-        html_txt += "<table border='1' style='border-collapse: collapse;'>"
+        html_txt += "<table style='border:0px solid black;border-collapse: collapse;' cellspacing='0' tablespacing='0'>"
+
+        cell_style_prefix = "style='border:1px solid black;border-collapse: collapse;"
 
         header = True
-        for line in table:
+        for j, line in enumerate(table):
             html_txt += "<tr>"
 
             if header:
@@ -50,8 +52,16 @@ class TableNode(GenericNode):
             else:
                 cell = "td"
 
-            for text in line:
-                html_txt += f"<{cell}>{text}</{cell}>"
+            for i, text in enumerate(line):
+                # Adapt cell style for first column and first line
+                cell_style = cell_style_prefix
+                if i != 0:
+                    cell_style += "border-left:0;"
+                if j != 0:
+                    cell_style += "border-top:0;"
+                cell_style += "'"
+
+                html_txt += f"<{cell} {cell_style}>{text}</{cell}>"
 
             html_txt += "</tr>"
 
